@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 @Data
 @Table(name = "users")
@@ -27,12 +28,11 @@ public class User implements UserDetails {
     @Column(name = "active")
     private boolean active;
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles;
     @Column(name = "verification_token")
     private String verificationToken;
 
     ///security
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -40,7 +40,11 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername(){
-        return username;
+        return email;
+    }
+    @Override
+    public String getPassword(){
+        return password;
     }
 
     @Override
@@ -60,6 +64,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return true;
     }
 }

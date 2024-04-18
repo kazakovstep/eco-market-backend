@@ -38,18 +38,6 @@ public class ProductController {
         return productService.getProductsByCategory(category);
     }
 
-    @PostMapping("/product/create")
-    public String createProduct(Product product) {
-        productService.saveProduct(product);
-        return "redirect:/";
-    }
-
-    @PostMapping("/product/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return "redirect:/";
-    }
-
     @PostMapping("/image/{id}")
     public ResponseEntity<Resource> uploadImage(@PathVariable Long id) {
         try {

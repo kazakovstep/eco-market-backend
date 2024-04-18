@@ -1,7 +1,7 @@
 package com.example.eco_market.Configurations;
 
 import com.example.eco_market.Services.Impls.UserServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,15 +17,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
-
+    private JwtRequestFilter jwtRequestFilter;
     @Bean
-    public UserDetailsService userDetailsService(){return new UserServiceImpl();}
+    public UserDetailsService userDetailsService() {
+        return new UserServiceImpl();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,8 +42,9 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/info").authenticated()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/user").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(request -> request.getRequestURI().equals("/register")).permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().permitAll()
@@ -50,6 +55,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .defaultSuccessUrl("/")

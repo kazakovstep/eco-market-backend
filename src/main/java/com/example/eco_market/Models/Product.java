@@ -1,9 +1,12 @@
 package com.example.eco_market.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -51,4 +54,8 @@ public class Product {
 
     @Column(name = "image", columnDefinition = "longtext")
     private String image;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<OrderProduct> orderProducts;
 }

@@ -1,6 +1,7 @@
 package com.example.eco_market.Services.Impls;
 
 import com.example.eco_market.Configurations.UserDetail;
+import com.example.eco_market.DTO.UserDto;
 import com.example.eco_market.Models.User;
 import com.example.eco_market.Repositories.RoleRepository;
 import com.example.eco_market.Repositories.UserRepository;
@@ -9,6 +10,7 @@ import com.example.eco_market.Services.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,7 +55,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void saveUser(User user) {
-        if (user.getEmail().contains("admin")){
+        if (user.getEmail().contains("admin")) {
             user.setRoles(List.of(roleService.getAdminRole()));
         } else {
             user.setRoles(List.of(roleService.getUserRole()));
@@ -101,5 +103,26 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void updateUser(UserDto updatedUser) {
+        User user = userRepository.findById(updatedUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + updatedUser.getId()));
+
+        if(updatedUser.getUsername()!= null){
+            user.setUsername(updatedUser.getUsername());
+        }
+        if(updatedUser.getEmail()!= null){
+            user.setEmail(updatedUser.getEmail());
+        }
+        if (updatedUser.getPassword()!= null){
+            user.setPassword(encoder.encode(updatedUser.getPassword()));
+        }
+        if (updatedUser.getRole()!= null){
+            user.setRoles(updatedUser.getRole());
+        }
+
+        userRepository.save(user);
     }
 }

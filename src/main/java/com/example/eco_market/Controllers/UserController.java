@@ -2,6 +2,7 @@ package com.example.eco_market.Controllers;
 
 import com.example.eco_market.DTO.JwtRequest;
 import com.example.eco_market.DTO.RegistrationUserDto;
+import com.example.eco_market.DTO.UserDto;
 import com.example.eco_market.Models.User;
 import com.example.eco_market.Services.Impls.AuthServiceImpl;
 import com.example.eco_market.Services.Impls.UserServiceImpl;
@@ -43,5 +44,11 @@ public class UserController {
     @GetMapping("/user")
     public User getCurrentUser() {
         return userService.getCurrentUser();
+    }
+
+    @PutMapping("/user")
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userForm){
+        userService.updateUser(userForm);
+        return ResponseEntity.ok().build();
     }
 }

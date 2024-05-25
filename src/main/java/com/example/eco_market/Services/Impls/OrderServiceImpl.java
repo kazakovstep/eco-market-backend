@@ -1,19 +1,23 @@
 package com.example.eco_market.Services.Impls;
 
 import com.example.eco_market.Models.Order;
+import com.example.eco_market.Models.User;
 import com.example.eco_market.Repositories.OrderRepository;
+import com.example.eco_market.Repositories.UserRepository;
 import com.example.eco_market.Services.OrderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserServiceImpl userService;
 
     @Override
     public Order createOrder(Order order) {
@@ -21,9 +25,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
+    public List<Order> getAllUserOrders() {
+        Long userId = userService.getCurrentUser().getId();
+        return orderRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public Optional<Order> getOrderById(Long id){
+        return orderRepository.findById(id);
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface ProductService {
 
     List<Product> listProducts(String title);
 
-    Product getProductById(long id);
+    Product getProductById(Long id);
 
     List<Product> getProductsByCategory(String category);
 

@@ -3,6 +3,7 @@ package com.example.eco_market.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,11 +15,19 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "product_id")
-    private List<Long> productIds;
+    @Column(name = "cost")
+    private int cost;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "amount")
+    private int amount;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<OrderProduct> orderProducts;
 }

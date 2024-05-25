@@ -32,6 +32,7 @@ public class User implements UserDetails {
     @Column(name = "verification_token")
     private String verificationToken;
 
+
     ///security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -40,7 +41,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername(){
-        return email;
+        return username;
     }
     @Override
     public String getPassword(){
